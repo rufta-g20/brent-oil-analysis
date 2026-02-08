@@ -9,18 +9,19 @@ Our workflow follows a structured analytical pipeline to deliver actionable inte
 5. **Causal Mapping:** Cross-referencing detected change points with the researched `external_events.csv` (15 key events).
 6. **Insight Synthesis:** Developing recommendations for investment and policy stakeholders.
 
-## 2. Assumptions and Limitations
-- **Assumptions:** We assume price data is accurate as recorded and that major market shifts are reflected in daily price movements.
-- **Limitations & Causality:** Statistical correlation between an event (e.g., an OPEC decision) and a price change does not strictly prove **causal impact**. Other variables like global inflation or alternative energy shifts may co-occur. Change point models identify *when* a shift happened; human expertise is required to attribute the *why*.
+## 2. From EDA to Modeling: Informed Priors
+Our initial analysis directly informs the structure of the Task 2 Bayesian Change Point Model:
+- **Non-Stationarity ($p=0.289$):** Confirms that the global mean ($\mu$) is not constant. This justifies using a model with a "switch point" ($\tau$) where $\mu_1 \neq \mu_2$.
+- **Volatility Clusters:** High volatility periods (e.g., 2008 Financial Crisis, 2020 COVID-19) suggest we should use a **Student-T distribution** for our likelihood instead of a Normal distribution to better handle "fat tails" or extreme price outliers.
+- **Prior Selection:** Based on the `external_events.csv`, we will set a **Uniform Prior** for the switch point $\tau$ across the entire timeline, as we have multiple potential candidate dates for structural breaks.
 
-## 3. Communication Channels
-Insights will be delivered through:
-- **Interactive Dashboard:** A React/Flask application for stakeholder data exploration.
-- **Interim/Final Reports:** Detailed technical documentation and quantified impact statements.
-- **Policy Briefings:** Summaries tailored for government and regulatory bodies.
+## 3. Assumptions and Limitations
+- **Assumptions:** We assume price data is accurate at market close.
+- **Limitations:** Correlation $\neq$ Causation. Statistical shifts identify *when* volatility changed, but qualitative research (the Events dataset) is required to propose the *why*.
 
-## 4. Understanding the Model (Change Point Analysis)
-Change point models identify **structural breaks** where price parameters shift significantly. 
-- **Analysis Results:** Initial testing yielded a **p-value of 0.289**, confirming the data is **non-stationary**. This property informs our choice to use a change point model rather than standard linear regression, as the model must account for shifts in the mean over time.
-- **Expected Outputs:** The model will output the posterior distribution of the switch date ($\tau$) and the specific price means ($\mu_1, \mu_2$) before and after the break.
-- **Limitations:** The model may struggle to distinguish between multiple closely spaced events or very gradual transitions.
+## 4. Communication Strategy
+| Audience | Primary Channel | Key Priority |
+| :--- | :--- | :--- |
+| **Investors** | Interactive Dashboard | Volatility forecasting and regime shift alerts. |
+| **Policymakers** | Policy Briefings | Correlation between geopolitical sanctions and price stability. |
+| **Internal Team** | Technical Reports/PRs | Model accuracy, MCMC convergence, and code robustness. |

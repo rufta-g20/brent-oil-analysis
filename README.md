@@ -29,12 +29,26 @@ pip install -r requirements.txt
 2. **Data Preparation:**
 Ensure `BrentOilPrices.csv` and `external_events.csv` are in the `data/` folder.
 
+## 📊 Data Schema & Provenance
+- **Source:** Brent Oil Prices (1987-2022).
+- **Columns:**
+  - `Date`: (Index) Daily frequency, mixed format handled via `analysis_utils`.
+  - `Price`: (Float) Daily closing price in USD.
+  - `Volatility`: (Float) 30-day rolling annualized standard deviation.
+
+## 🌿 Branching & Contribution
+To maintain the code base, we follow a feature-branch workflow:
+- `main`: Stable, production-ready code.
+- `task/task-number`: For specific challenge tasks (e.g., `task/task-1`).
+- `feature/feature-name`: For modular additions like dashboard components.
+
 ## ✅ Work Done So Far (Task 1)
 
 * **Workflow Defined:** Established a pipeline from data cleaning to Bayesian inference.
-* **Event Dataset:** Compiled a structured CSV of 15 key geopolitical and economic events since 1987.
+* **Robustness:** Hardened utility functions with type hinting and error validation.
+* **Event Dataset:** Compiled a structured CSV of 15 key geopolitical and economic events since 1987 to validate structural breaks.
 * **Technical EDA:** 
-* Cleaned and standardized 9,011 rows of mixed-format date data.
-* Performed Trend and Volatility analysis (visualizing 30-day rolling standard deviations).
-* Conducted ADF testing, confirming non-stationarity ().
+- Cleaned and standardized 9,011 rows of mixed-format date data.
+- Performed Trend and Volatility analysis (visualizing 30-day rolling standard deviations).
+- Conducted ADF testing, confirmed non-stationarity ($p=0.289$), informing Bayesian prior selection.
 * **Documentation:** Completed foundational analysis outlining model choices, assumptions, and causal limitations.
