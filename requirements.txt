@@ -6,3 +6,6 @@ statsmodels
 scipy
 pmdarima
 jupyter
+pymc
+arviz
+pytensor

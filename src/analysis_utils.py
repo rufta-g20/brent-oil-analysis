@@ -57,3 +57,13 @@ def calculate_volatility(series: pd.Series, window: int = 30) -> pd.Series:
         
     log_returns = np.log(series / series.shift(1))
     return log_returns.rolling(window=window).std() * np.sqrt(252)
+
+def prepare_modeling_data(df: pd.DataFrame):
+    """
+    Prepares price data and time indices for PyMC.
+    """
+    # Using Price data as a 1D array
+    data = df['Price'].values
+    # Creating a time index (0 to N)
+    time_index = np.arange(len(data))
+    return data, time_index
