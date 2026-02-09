@@ -46,14 +46,14 @@ To maintain the code base, we follow a feature-branch workflow to maintain code 
 
 ### Task 1: Foundation & EDA
 
-* **Workflow Defined:** Established a pipeline from data cleaning to Bayesian inference.
-* **Robustness:** Hardened utility functions with type hinting and error validation.
-* **Event Dataset:** Compiled a structured CSV of 15 key geopolitical and economic events since 1987 to validate structural breaks.
-* **Technical EDA:** 
- - Cleaned and standardized 9,011 rows of mixed-format date data.
- - Performed Trend and Volatility analysis (visualizing 30-day rolling standard deviations).
- - Conducted ADF testing, confirmed non-stationarity ($p=0.289$), informing Bayesian prior selection.
-* **Documentation:** Completed foundational analysis outlining model choices, assumptions, and causal limitations.
+- **Workflow Defined:** Established a pipeline from data cleaning to Bayesian inference.
+- **Robustness:** Hardened utility functions with type hinting and error validation.
+- **Event Dataset:** Compiled a structured CSV of 15 key geopolitical and economic events since 1987 to validate structural breaks.
+- **Technical EDA:** 
+  - Cleaned and standardized 9,011 rows of mixed-format date data.
+  - Performed Trend and Volatility analysis (visualizing 30-day rolling standard deviations).
+  - Conducted ADF testing, confirmed non-stationarity ($p=0.289$), informing Bayesian prior selection.
+- **Documentation:** Completed foundational analysis outlining model choices, assumptions, and causal limitations.
 
 ### Task 2: Bayesian Change Point Modeling
 
