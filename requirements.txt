@@ -9,3 +9,5 @@ jupyter
 pymc
 arviz
 pytensor
+flask
+flask-cors

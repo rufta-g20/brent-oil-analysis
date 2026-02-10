@@ -11,3 +11,23 @@ env/
 
 # Data 
 data/
+
+# React dependencies
+dashboard/node_modules/
+dashboard/build/
+dashboard/.env*
+dashboard/.env.local
+dashboard/.env.development.local
+dashboard/.env.test.local
+dashboard/.env.production.local
+
+# Logs
+dashboard/coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS specific files
+.DS_Store
+
+package-lock.json
