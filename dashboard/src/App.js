@@ -9,62 +9,57 @@ function App() {
   const [metrics, setMetrics] = useState({});
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [startDate, setStartDate] = useState('1987-01-01'); // Adjusted to see the 2005 break
+  const [startDate, setStartDate] = useState('1987-01-01'); 
 
-    // 1. Fetch Data ONCE on mount
+  // 1. Fetch Data ONCE on mount
   useEffect(() => {
     const fetchData = async () => {
-  try {
-    const [priceRes, metricRes, eventRes] = await Promise.all([
-      axios.get('http://localhost:5000/api/historical-prices'),
-      axios.get('http://localhost:5000/api/change-point-results'),
-      axios.get('http://localhost:5000/api/events')
-    ]);
+      try {
+        const [priceRes, metricRes, eventRes] = await Promise.all([
+          axios.get('http://localhost:5000/api/historical-prices'),
+          axios.get('http://localhost:5000/api/change-point-results'),
+          axios.get('http://localhost:5000/api/events')
+        ]);
 
-    // Use the whole dataset instead of .slice(4000, 7000)
-    setPrices(priceRes.data); 
+        setPrices(priceRes.data); 
 
-    const rawDate = new Date(metricRes.data.detected_date);
-    const formattedTarget = rawDate.toLocaleDateString('en-GB', {
-      day: '2-digit', month: 'short', year: '2-digit'
-    }).replace(/ /g, '-');
+        const rawDate = new Date(metricRes.data.detected_date);
+        const formattedTarget = rawDate.toLocaleDateString('en-GB', {
+          day: '2-digit', month: 'short', year: '2-digit'
+        }).replace(/ /g, '-');
 
-    setMetrics({ ...metricRes.data, detected_date: formattedTarget });
-    setEvents(eventRes.data);
-    setLoading(false);
-  } catch (err) {
-    console.error("Error:", err);
-    setLoading(false);
-  }
-};
+        setMetrics({ ...metricRes.data, detected_date: formattedTarget });
+        setEvents(eventRes.data);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setLoading(false);
+      }
+    };
     fetchData();
-  }, []); // Empty array means this only runs once
+  }, []);
 
-  // 2. Filter data locally based on the UI input
+  // 2. Optimized Filter: Handles 2-digit years and performance
   const filteredPrices = useMemo(() => {
-  if (prices.length === 0) return [];
+    if (prices.length === 0) return [];
 
-  const filterDate = new Date(startDate);
+    const filterDate = new Date(startDate);
 
-  return prices.filter(p => {
-    const parts = p.Date.split('-');
-    if (parts.length !== 3) return false;
+    return prices.filter(p => {
+      const parts = p.Date.split('-');
+      if (parts.length !== 3) return false;
 
-    const day = parts[0];
-    const month = parts[1];
-    let year = parseInt(parts[2]);
+      const day = parts[0];
+      const month = parts[1];
+      let year = parseInt(parts[2]);
 
-    // Logic to handle 2-digit years: 87-99 are 1900s, 00-22 are 2000s
-    if (year > 50) {
-      year = 1900 + year;
-    } else {
-      year = 2000 + year;
-    }
+      // Logic for 1987-2022 coverage
+      year = year > 50 ? 1900 + year : 2000 + year;
 
-    const itemDate = new Date(`${month} ${day}, ${year}`);
-    return itemDate >= filterDate;
-  });
-}, [prices, startDate]);
+      const itemDate = new Date(`${month} ${day}, ${year}`);
+      return itemDate >= filterDate;
+    });
+  }, [prices, startDate]);
   
   if (loading) return <div className="loading">Loading Birhan Energies Analysis...</div>;
 
@@ -75,7 +70,7 @@ function App() {
         <p>Interactive Geopolitical Impact Dashboard</p>
       </header>
 
-      {/* Metric Cards  */}
+      {/* Metric Cards - CSS Grid Layout */}
       <div className="metrics-grid">
         <div className="metric-card">
           <TrendingUp className="icon-blue" />
@@ -99,6 +94,7 @@ function App() {
           </div>
         </div>
       </div>
+
       <div className="filter-section">
         <label>View Data From: </label>
         <input 
@@ -108,7 +104,7 @@ function App() {
         />
       </div>
 
-      {/* Visualizer  */}
+      {/* Visualizer with Explicit Event Highlighting */}
       <div className="chart-section">
         <h2>Historical Trend & Bayesian Change Points</h2>
         <div className="chart-container">
@@ -120,6 +116,19 @@ function App() {
               <Tooltip />
               <Legend />
               <Line type="monotone" dataKey="Price" stroke="#1e3a8a" dot={false} strokeWidth={2} />
+              
+              {/* Researched Events Markers */}
+              {events.map((ev, idx) => (
+                <ReferenceLine 
+                  key={`event-${idx}`}
+                  x={ev.Date} 
+                  stroke="#94a3b8" 
+                  strokeDasharray="3 3" 
+                  label={{ value: '!', position: 'insideBottomLeft', fill: '#94a3b8', fontSize: 10 }}
+                />
+              ))}
+
+              {/* Main Bayesian Structural Break */}
               {filteredPrices.some(p => p.Date === metrics.detected_date) && (
                 <ReferenceLine 
                   x={metrics.detected_date} 
@@ -133,7 +142,6 @@ function App() {
         </div>
       </div>
 
-      {/* Events Table */}
       <div className="table-section">
         <h2>Geopolitical Event Log</h2>
         <div className="table-wrapper">

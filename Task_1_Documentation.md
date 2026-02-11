@@ -15,18 +15,25 @@ Our initial analysis directly informs the structure of the Task 2 Bayesian Chang
 - **Volatility Clusters:** High volatility periods (e.g., 2008 Financial Crisis, 2020 COVID-19) suggest we should use a **Student-T distribution** for our likelihood instead of a Normal distribution to better handle "fat tails" or extreme price outliers.
 - **Prior Selection:** Based on the `external_events.csv`, we will set a **Uniform Prior** for the switch point $\tau$ across the entire timeline, as we have multiple potential candidate dates for structural breaks.
 
-## 3. Assumptions and Limitations
-- **Assumptions:** We assume price data is accurate at market close.
-- **Limitations:** Correlation $\neq$ Causation. Statistical shifts identify *when* volatility changed, but qualitative research (the Events dataset) is required to propose the *why*.
-
-## 4. Communication Strategy
+## 3. Communication Strategy
 | Audience | Primary Channel | Key Priority |
 | :--- | :--- | :--- |
 | **Investors** | Interactive Dashboard | Volatility forecasting and regime shift alerts. |
 | **Policymakers** | Policy Briefings | Correlation between geopolitical sanctions and price stability. |
 | **Internal Team** | Technical Reports/PRs | Model accuracy, MCMC convergence, and code robustness. |
 
-## 5. Schematic of the Full Pipeline
+## 4. Assumptions & Causality Limitations
+
+- **Stationarity Assumption:** Our EDA confirmed the data is non-stationary ($p=0.289$), which justifies the use of Bayesian switch-point models rather than simple linear regression.
+- **Correlation vs. Causality:** We acknowledge that while our model identifies a *coincidence* between the 2005 price shift and the Iraq War, it does not prove direct causation. 
+- **Omitted Variable Bias:** Global oil prices are influenced by thousands of factors (GDP growth, USD strength, shipping rates). Our model focuses on specific catalysts to maintain interpretability but recognizes these external "noise" factors.
+
+## 5. Event Mapping & Drill-Down Logic
+To avoid over-interpreting coincident events, our dashboard uses:
+1. **Primary Catalyst Mapping:** The Bayesian shift point is mathematically compared against the closest researched event in time.
+2. **Visual Tooltips:** Allows stakeholders to drill down into daily price movements to see if price spikes preceded or followed specific geopolitical announcements.
+
+## 6. Schematic of the Full Pipeline
 
 ```text
 [Raw Data] -> [Cleaning/Validation] -> [EDA: Trend/Volatility/ADF]

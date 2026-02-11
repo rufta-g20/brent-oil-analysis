@@ -53,6 +53,13 @@ npm start
 * `Price`: (Float) Daily closing price in USD.
 * `Volatility`: (Float) 30-day rolling annualized standard deviation.
 
+## 🌳 Branching Strategy
+To ensure code quality and traceability, we follow a feature-branch workflow:
+- `main`: Production-ready, stable code.
+- `feature/task-1-eda-pipeline`: Foundational data processing.
+- `feature/task-2-bayesian-modeling`: Statistical inference and MCMC sampling.
+- `feature/task-3-dashboard-ui`: React frontend and Flask API integration.
+
 ## ✅ Work Completed
 
 ### Task 1: Foundation & EDA
