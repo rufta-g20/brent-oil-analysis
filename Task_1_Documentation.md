@@ -25,3 +25,16 @@ Our initial analysis directly informs the structure of the Task 2 Bayesian Chang
 | **Investors** | Interactive Dashboard | Volatility forecasting and regime shift alerts. |
 | **Policymakers** | Policy Briefings | Correlation between geopolitical sanctions and price stability. |
 | **Internal Team** | Technical Reports/PRs | Model accuracy, MCMC convergence, and code robustness. |
+
+## 5. Schematic of the Full Pipeline
+
+```text
+[Raw Data] -> [Cleaning/Validation] -> [EDA: Trend/Volatility/ADF]
+                                               |
+[Event Dataset] ----------------------> [Bayesian PyMC Model]
+                                               |
+[Flask API] <-------------------------- [Posterior Inference]
+      |
+[React Dashboard] -> [Stakeholder Insights]
+
+```

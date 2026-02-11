@@ -81,3 +81,8 @@ npm start
 * **GET `/api/historical-prices**`: Historical price time-series.
 * **GET `/api/change-point-results**`: Bayesian model detection stats.
 * **GET `/api/events**`: Geopolitical event logs.
+
+## 🔮 Future Work & Extensions
+- **Multi-Point Detection:** Expand the PyMC model to detect multiple switch points ($\tau_1, \tau_2$) to capture the 2008 and 2020 shocks simultaneously.
+- **Explanatory Variables:** Incorporate USD Exchange Index and Global GDP growth as predictors in a Vector Autoregression (VAR) model.
+- **Markov-Switching Models:** Implement a model that explicitly switches between 'Calm' and 'Crisis' volatility regimes.

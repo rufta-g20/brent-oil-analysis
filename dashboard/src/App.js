@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import axios from 'axios';
 import { TrendingUp, Calendar, AlertCircle } from 'lucide-react';
@@ -9,32 +9,27 @@ function App() {
   const [metrics, setMetrics] = useState({});
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [startDate, setStartDate] = useState('1987-01-01'); // Adjusted to see the 2005 break
 
+    // 1. Fetch Data ONCE on mount
   useEffect(() => {
-    // Fetching analysis results from Flask Backend 
     const fetchData = async () => {
   try {
-    const priceRes = await axios.get('http://localhost:5000/api/historical-prices');
-    const metricRes = await axios.get('http://localhost:5000/api/change-point-results');
-    const eventRes = await axios.get('http://localhost:5000/api/events');
-    
-    const rawDate = new Date(metricRes.data.detected_date);
-  
-    // This creates a string like "24-Feb-05"
-    const formattedTarget = rawDate.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: '2-digit'
-    }).replace(/ /g, '-'); 
+    const [priceRes, metricRes, eventRes] = await Promise.all([
+      axios.get('http://localhost:5000/api/historical-prices'),
+      axios.get('http://localhost:5000/api/change-point-results'),
+      axios.get('http://localhost:5000/api/events')
+    ]);
 
-    // Index 4000 to 6000 usually covers the 2003-2007 period in this dataset
-    setPrices(priceRes.data.slice(4000, 6000)); 
-    
-    setMetrics({
-      ...metricRes.data,
-      detected_date: formattedTarget // Overwrite with the format the chart understands
-    });
-    
+    // Use the whole dataset instead of .slice(4000, 7000)
+    setPrices(priceRes.data); 
+
+    const rawDate = new Date(metricRes.data.detected_date);
+    const formattedTarget = rawDate.toLocaleDateString('en-GB', {
+      day: '2-digit', month: 'short', year: '2-digit'
+    }).replace(/ /g, '-');
+
+    setMetrics({ ...metricRes.data, detected_date: formattedTarget });
     setEvents(eventRes.data);
     setLoading(false);
   } catch (err) {
@@ -43,7 +38,34 @@ function App() {
   }
 };
     fetchData();
-  }, []);
+  }, []); // Empty array means this only runs once
+
+  // 2. Filter data locally based on the UI input
+  const filteredPrices = useMemo(() => {
+  if (prices.length === 0) return [];
+
+  const filterDate = new Date(startDate);
+
+  return prices.filter(p => {
+    const parts = p.Date.split('-');
+    if (parts.length !== 3) return false;
+
+    const day = parts[0];
+    const month = parts[1];
+    let year = parseInt(parts[2]);
+
+    // Logic to handle 2-digit years: 87-99 are 1900s, 00-22 are 2000s
+    if (year > 50) {
+      year = 1900 + year;
+    } else {
+      year = 2000 + year;
+    }
+
+    const itemDate = new Date(`${month} ${day}, ${year}`);
+    return itemDate >= filterDate;
+  });
+}, [prices, startDate]);
+  
   if (loading) return <div className="loading">Loading Birhan Energies Analysis...</div>;
 
   return (
@@ -77,21 +99,35 @@ function App() {
           </div>
         </div>
       </div>
+      <div className="filter-section">
+        <label>View Data From: </label>
+        <input 
+          type="date" 
+          value={startDate} 
+          onChange={(e) => setStartDate(e.target.value)} 
+        />
+      </div>
 
       {/* Visualizer  */}
       <div className="chart-section">
         <h2>Historical Trend & Bayesian Change Points</h2>
         <div className="chart-container">
           <ResponsiveContainer width="100%" height={400}>
-            <LineChart data={prices}>
+            <LineChart data={filteredPrices}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
               <XAxis dataKey="Date" tick={{fontSize: 12}} />
               <YAxis tick={{fontSize: 12}} />
               <Tooltip />
               <Legend />
               <Line type="monotone" dataKey="Price" stroke="#1e3a8a" dot={false} strokeWidth={2} />
-              {/* Event Highlight */}
-              <ReferenceLine x={metrics.detected_date} stroke="#dc2626" strokeWidth={3} label={{ value: 'Structural Break', fill: '#dc2626', position: 'top' }} />
+              {filteredPrices.some(p => p.Date === metrics.detected_date) && (
+                <ReferenceLine 
+                  x={metrics.detected_date} 
+                  stroke="#dc2626" 
+                  strokeWidth={3} 
+                  label={{ value: 'Structural Break', fill: '#dc2626', position: 'top' }} 
+                />
+              )}
             </LineChart>
           </ResponsiveContainer>
         </div>

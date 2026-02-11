@@ -15,7 +15,7 @@ body {
 .dashboard-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 40px;
 }
 
 .main-header {
@@ -30,12 +30,11 @@ body {
   font-size: 2rem;
 }
 
-/* Metrics [cite: 143] */
+/* Metrics  */
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
+  grid-template-columns: repeat(3, 1fr); 
+  gap: 25px;
 }
 
 .metric-card {
@@ -61,7 +60,7 @@ body {
   margin: 0;
 }
 
-/* Chart [cite: 130] */
+/* Chart */
 .chart-section {
   background: white;
   padding: 25px;
@@ -70,7 +69,7 @@ body {
   margin-bottom: 30px;
 }
 
-/* Table [cite: 134] */
+/* Table */
 .table-section {
   background: white;
   padding: 25px;
@@ -99,16 +98,41 @@ body {
 .icon-red { color: #dc2626; }
 .icon-gold { color: #d97706; }
 
-@media (max-width: 768px) {
-  .metrics-grid {
-    grid-template-columns: 1fr; /* Stack cards vertically on phones */
-  }
+/* --- Tablet / iPad Styles (768px to 1023px) --- */
+@media (max-width: 1023px) {
+  .dashboard-container { padding: 20px; }
   
-  .main-header h1 {
-    font-size: 1.5rem;
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on tablets */
   }
 
-  .chart-section {
-    padding: 10px;
+  .main-header h1 { font-size: 1.75rem; }
+}
+
+/* --- Mobile Styles (Below 768px) --- */
+@media (max-width: 767px) {
+  .metrics-grid {
+    grid-template-columns: 1fr; /* 1 column (stacked) on mobile */
+  }
+
+  .main-header { padding-left: 10px; margin-bottom: 20px; }
+  
+  .main-header h1 { font-size: 1.4rem; }
+
+  .chart-section, .table-section {
+    padding: 15px;
+    border-radius: 8px;
+  }
+
+  /* Make table scrollable horizontally on small screens */
+  .table-wrapper {
+    overflow-x: auto;
+  }
+
+}
+
+@media (max-width: 450px) {
+  html {
+    font-size: 63%;
   }
 }
